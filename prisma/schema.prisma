@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = "file:./db.sqlite"
+    // url      = env("DATABASE_URL")
+}
+
+// Necessary for Next auth
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String?
+    access_token      String?
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String?
+    session_state     String?
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+    @@map("accounts")
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("sessions")
+}
+
+model User {
+    id              String            @id @default(cuid())
+    name            String?
+    email           String?           @unique
+    emailVerified   DateTime?
+    image           String?
+    accounts        Account[]
+    sessions        Session[]
+    ChatMessage     ChatMessage[]
+    ChatParticipant ChatParticipant[]
+
+    @@map("users")
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+    @@map("verification_tokens")
+}
+
+model ChatConversation {
+    id           String            @id @default(cuid())
+    createdAt    DateTime          @default(now()) @map("created_at")
+    updatedAt    DateTime?         @map("updated_at")
+    title        String            @default("")
+    messages     ChatMessage[]
+    participants ChatParticipant[]
+
+    @@map("chat_conversations")
+}
+
+model ChatMessage {
+    id             String           @id @default(cuid())
+    createdAt      DateTime         @default(now()) @map("created_at")
+    updatedAt      DateTime?        @map("updated_at")
+    content        String
+    authorId       String           @map("author_id")
+    conversationId String           @map("conversation_id")
+    author         User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+    conversation   ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+    @@map("chat_messages")
+}
+
+model ChatParticipant {
+    id             String           @id @default(cuid())
+    createdAt      DateTime         @default(now()) @map("created_at")
+    updatedAt      DateTime?        @map("updated_at")
+    userId         String           @map("user_id")
+    conversationId String           @map("conversation_id")
+    user           User             @relation(fields: [userId], references: [id], onDelete: SetNull)
+    conversation   ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, conversationId])
+    @@map("chat_participants")
+}

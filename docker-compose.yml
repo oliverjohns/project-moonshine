@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres:13
+    container_name: moonshine-local-db
+    ports:
+      - "5555:5432"
+    environment:
+      POSTGRES_USER: developer
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: moonshine
+    volumes:
+      - app-volume:/var/lib/postgresql/data
+  db-test:
+    image: postgres:13
+    container_name: moonshine-test-db
+    ports:
+      - "15555:5432"
+    environment:
+      POSTGRES_USER: developer
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: moonshinetestdb
+volumes:
+  app-volume: #
