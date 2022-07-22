@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:wss": "cross-env PORT=3001 nodemon --watch src --ext .ts,.tsx,js,jsx --signal SIGTERM --exec \"ts-node --project tsconfig.server.json src/server/wssDevServer.ts\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -22,6 +23,7 @@
     "@types/ws": "^8.5.3",
     "next": "12.2.0",
     "next-auth": "^4.9.0",
+    "node-fetch": "^3.2.9",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-query": "^3.39.1",
@@ -35,6 +37,7 @@
     "@types/react-dom": "18.0.5",
     "autoprefixer": "^10.4.7",
     "eslint": "8.18.0",
+    "cross-env": "^7.0.3",
     "eslint-config-next": "12.1.6",
     "postcss": "^8.4.14",
     "prisma": "^4.0.0",

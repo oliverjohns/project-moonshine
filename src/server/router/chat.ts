@@ -3,7 +3,7 @@ import { createProtectedRouter } from "./createRouter";
 import { TRPCError } from "@trpc/server";
 import { ChatMessage, ChatParticipant } from "@prisma/client";
 import EventEmitter from "events";
-import * as trpc from "@trpc/server";
+import { Subscription } from "@trpc/server";
 
 const conversationInclude = {
   participants: { include: { user: true } },
@@ -18,7 +18,7 @@ export const chatRouter = createProtectedRouter()
       // `resolve()` is triggered for each client when they start subscribing `onAdd`
 
       // return a `Subscription` with a callback which is triggered immediately
-      return new trpc.Subscription<ChatMessage>((emit) => {
+      return new Subscription<ChatMessage>((emit) => {
         const onNewMessage = (
           data: ChatMessage & { participantEmails: string[] }
         ) => {
