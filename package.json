@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "migrate": "prisma migrate dev --name init"
+    "seed": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true ts-node src/server/db/seed.ts",
+    "migrate": "prisma migrate dev --name init",
+    "format": "prettier --write \"./**/*.{js,jsx,json}\""
   },
   "dependencies": {
     "@formkit/auto-animate": "^1.0.0-beta.1",
@@ -28,6 +30,7 @@
     "react-icons": "^4.4.0",
     "react-query": "^3.39.1",
     "superjson": "^1.9.1",
+    "tailwind-merge": "^1.5.1",
     "zod": "^3.17.3",
     "zustand": "^4.0.0-rc.1"
   },
