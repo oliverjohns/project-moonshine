@@ -14,7 +14,7 @@ export default function pusherAuthUserEndpoint(
   }
   const auth = pusherServerClient.authenticateUser(socket_id, {
     id: user_id,
-    name: "oli",
+    name: "theo",
   });
   res.send(auth);
 }

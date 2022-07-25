@@ -7,6 +7,8 @@ const envSchema = z.object({
   NEXTAUTH_URL: z.string().url(),
   TWITCH_CLIENT_ID: z.string(),
   TWITCH_CLIENT_SECRET: z.string(),
+  GITHUB_CLIENT_ID: z.string(),
+  GITHUB_CLIENT_SECRET: z.string(),
   PUSHER_APP_ID: z.string(),
   NEXT_PUBLIC_PUSHER_APP_KEY: z.string(),
   NEXT_PUBLIC_PUSHER_SERVER_HOST: z.string(),

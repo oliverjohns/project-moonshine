@@ -1,23 +1,33 @@
+version: '3.9'
 services:
+  soketi:
+    container_name: 'soketi_server'
+    restart: unless-stopped
+    image: 'quay.io/soketi/soketi:0.17-16-alpine'
+    ports:
+      - '6001:6001'
+      - '9601:9601'
+    environment:
+      DEBUG: 1
+      DEFAULT_APP_ID: default
+      DEFAULT_APP_KEY: app-key
+      DEFAULT_APP_SECRET: app-secret
+    networks:
+      - soketi_network
   db:
     image: postgres:13
     container_name: moonshine-local-db
     ports:
-      - "5555:5432"
+      - "5789:5432"
     environment:
       POSTGRES_USER: developer
       POSTGRES_PASSWORD: mysecretpassword
       POSTGRES_DB: moonshine
     volumes:
       - app-volume:/var/lib/postgresql/data
-  db-test:
-    image: postgres:13
-    container_name: moonshine-test-db
-    ports:
-      - "15555:5432"
-    environment:
-      POSTGRES_USER: developer
-      POSTGRES_PASSWORD: mysecretpassword
-      POSTGRES_DB: moonshinetestdb
 volumes:
   app-volume: #
+
+networks:
+  soketi_network:
+    driver: bridge
