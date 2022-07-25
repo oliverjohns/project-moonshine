@@ -4,7 +4,7 @@ const { env } = require('./src/server/env');
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['avatars.githubusercontent.com', 'images.unsplash.com', 'cdn.pixabay.com'],
+    domains: ['avatars.githubusercontent.com', 'images.unsplash.com', 'cdn.pixabay.com', 'cdn.discordapp.com'],
   },
 };
 
