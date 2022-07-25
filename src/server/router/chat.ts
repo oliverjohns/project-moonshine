@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { ChatMessage, ChatParticipant } from "@prisma/client";
 import EventEmitter from "events";
 import * as trpc from "@trpc/server";
+import { pusherServerClient } from "../common/pusher";
 
 const conversationInclude = {
   participants: { include: { user: true } },
@@ -13,35 +14,6 @@ const conversationInclude = {
 const ee = new EventEmitter();
 
 export const chatRouter = createProtectedRouter()
-  .subscription("onNewMessage", {
-    resolve({ ctx }) {
-      // `resolve()` is triggered for each client when they start subscribing `onAdd`
-
-      // return a `Subscription` with a callback which is triggered immediately
-      return new trpc.Subscription<ChatMessage>((emit) => {
-        const onNewMessage = (
-          data: ChatMessage & { participantEmails: string[] }
-        ) => {
-          console.log("onNewMessage", data.participantEmails);
-          // emit data to client
-          if (
-            ctx.session.user?.email &&
-            data.participantEmails.includes(ctx.session.user?.email)
-          ) {
-            emit.data(data);
-          }
-        };
-
-        // trigger `onNewMessage()` when `add` is triggered in our event emitter
-        ee.on("newMessage", onNewMessage);
-
-        // unsubscribe function when client disconnects or stops subscribing
-        return () => {
-          ee.off("newMessage", onNewMessage);
-        };
-      });
-    },
-  })
   .mutation("sendMessage", {
     input: z.object({
       content: z.string(),
@@ -63,11 +35,10 @@ export const chatRouter = createProtectedRouter()
           author: { connect: { email: userEmail } },
         },
       });
-      const participantEmails = conversation.participants.map(
-        (p) => p.user.email
-      );
-      console.log("emitting");
-      ee.emit("newMessage", { ...message, participantEmails });
+      pusherServerClient.trigger(conversation.id, "chat-message", {
+        message,
+        authorEmail: userEmail,
+      });
       return {
         message,
       };

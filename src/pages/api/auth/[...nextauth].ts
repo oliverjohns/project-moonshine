@@ -21,25 +21,25 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GITHUB_SECRET,
     }),
     // ...add more providers here
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        name: {
-          label: "Email",
-          type: "text",
-        },
-        password: {
-          label: "Password",
-          type: "password",
-          placeholder: "",
-        },
-      },
-      async authorize(credentials, _req) {
-        const user = { id: 1, name: credentials?.name ?? "J Smith" };
+    // CredentialsProvider({
+    //   name: "Credentials",
+    //   credentials: {
+    //     name: {
+    //       label: "Email",
+    //       type: "text",
+    //     },
+    //     password: {
+    //       label: "Password",
+    //       type: "password",
+    //       placeholder: "",
+    //     },
+    //   },
+    //   async authorize(credentials, _req) {
+    //     const user = { id: 1, name: credentials?.name ?? "J Smith" };
 
-        return user;
-      },
-    }),
+    //     return user;
+    //   },
+    // }),
   ],
 };
 

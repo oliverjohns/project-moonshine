@@ -2,7 +2,7 @@ import { ChatConversation, ChatMessage, ChatParticipant } from "@prisma/client";
 import { User } from "next-auth";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { KeyboardEvent, useState } from "react";
+import { createRef, KeyboardEvent, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface Props {
@@ -27,11 +27,17 @@ export default function ChatWindow({
     (p) => p.user.email !== userEmail
   )?.user;
   const [message, setMessage] = useState<string>("");
+  const bottomOfChat = createRef<HTMLDivElement>();
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Enter") {
       onSendMessage(message);
+      // scrollToBottom();
       setMessage("");
+      setTimeout(() => {
+        console.log("scrolling2bottom");
+        scrollToBottom();
+      }, 2000);
     }
   };
 
@@ -56,6 +62,11 @@ export default function ChatWindow({
       </li>
     );
   const mergedClasses = twMerge("hidden lg:col-span-2 lg:block", classes ?? "");
+
+  const scrollToBottom = () => {
+    bottomOfChat.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className={mergedClasses}>
       <div className="w-full">
@@ -85,6 +96,10 @@ export default function ChatWindow({
               />
             ))}
           </ul>
+          <div
+            style={{ float: "left", clear: "both" }}
+            ref={bottomOfChat}
+          ></div>
         </div>
 
         <div className="flex items-center justify-between w-full p-3 border-t border-gray-300">

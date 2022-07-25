@@ -1,6 +1,8 @@
 export function timeSince(date: Date | undefined | null, suffix = " ago") {
   if (!date) return "";
-  var seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+  var seconds = Math.floor(
+    (new Date().getTime() - new Date(date).getTime()) / 1000
+  );
 
   var interval = seconds / 31536000;
 
