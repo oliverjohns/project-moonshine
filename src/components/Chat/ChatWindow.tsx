@@ -1,16 +1,8 @@
-import { ChatConversation, ChatMessage, ChatParticipant } from "@prisma/client";
-import { User } from "next-auth";
-import { useSession } from "next-auth/react";
-import Image from "next/image";
-import {
-  createRef,
-  KeyboardEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { twMerge } from "tailwind-merge";
-import { FullChatConversation } from "../../pages/chat";
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import { createRef, KeyboardEvent, useCallback, useEffect, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { FullChatConversation } from './Chat';
 
 interface Props {
   conversation: FullChatConversation;
@@ -18,26 +10,14 @@ interface Props {
   classes?: string;
 }
 
-export default function ChatWindow({
-  conversation,
-  onSendMessage,
-  classes,
-}: Props) {
+export default function ChatWindow({ conversation, onSendMessage, classes }: Props) {
   const { data: session } = useSession();
   const userEmail = session?.user?.email;
-  const userParticipant = conversation.participants.find(
-    (p) => p.user.email !== userEmail
-  )?.user;
-  const [message, setMessage] = useState<string>("");
+  const userParticipant = conversation.participants.find(p => p.user.email !== userEmail)?.user;
+  const [message, setMessage] = useState<string>('');
   const bottomOfChat = createRef<HTMLDivElement>();
 
-  const ChatMessage = ({
-    text,
-    authorEmail,
-  }: {
-    text: string;
-    authorEmail: string;
-  }) =>
+  const ChatMessage = ({ text, authorEmail }: { text: string; authorEmail: string }) =>
     authorEmail === userEmail ? (
       <li className="flex justify-start">
         <div className="relative max-w-xl rounded px-4 py-2 text-gray-700 shadow">
@@ -51,21 +31,25 @@ export default function ChatWindow({
         </div>
       </li>
     );
-  const mergedClasses = twMerge("hidden lg:col-span-2 lg:block", classes ?? "");
+  const mergedClasses = twMerge('hidden lg:col-span-2 lg:block', classes ?? '');
 
   const scrollToBottom = useCallback(() => {
-    bottomOfChat.current?.scrollIntoView({ behavior: "smooth" });
+    bottomOfChat.current?.scrollIntoView({ behavior: 'smooth' });
   }, [bottomOfChat]);
 
   useEffect(() => {
     scrollToBottom();
   }, [conversation.messages, scrollToBottom]);
 
+  const sendMessage = () => {
+    if (message) onSendMessage(message);
+    setMessage('');
+    scrollToBottom();
+  };
+
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Enter") {
-      onSendMessage(message);
-      setMessage("");
-      scrollToBottom();
+    if (event.key === 'Enter') {
+      sendMessage();
     }
   };
 
@@ -75,33 +59,19 @@ export default function ChatWindow({
         <div className="relative flex items-center border-b border-gray-300 p-3">
           <div className="relative h-10 w-10">
             {userParticipant?.image && (
-              <Image
-                className="rounded-full object-cover"
-                layout="fill"
-                src={userParticipant.image}
-                alt="username"
-              />
+              <Image className="rounded-full object-cover" layout="fill" src={userParticipant.image} alt="username" />
             )}
           </div>
-          <span className="ml-2 block font-bold text-gray-600">
-            {userParticipant?.name ?? ""}
-          </span>
+          <span className="ml-2 block font-bold text-gray-600">{userParticipant?.name ?? ''}</span>
           <span className="absolute left-10 top-3 h-3 w-3 rounded-full bg-green-600"></span>
         </div>
         <div className="relative h-[40rem] w-full overflow-y-auto p-6">
           <ul className="space-y-2">
             {conversation.messages.map((message, index) => (
-              <ChatMessage
-                key={index}
-                text={message.content}
-                authorEmail={message.authorId}
-              />
+              <ChatMessage key={index} text={message.content} authorEmail={message.authorId} />
             ))}
           </ul>
-          <div
-            style={{ float: "left", clear: "both" }}
-            ref={bottomOfChat}
-          ></div>
+          <div style={{ float: 'left', clear: 'both' }} ref={bottomOfChat}></div>
         </div>
 
         <div className="flex w-full items-center justify-between border-t border-gray-300 p-3">
@@ -145,10 +115,10 @@ export default function ChatWindow({
             name="message"
             onKeyDown={handleKeyDown}
             value={message}
-            onChange={(event) => setMessage(event.target.value)}
+            onChange={event => setMessage(event.target.value)}
             required
           />
-          <button type="submit">
+          <button onClick={sendMessage}>
             <svg
               className="h-5 w-5 origin-center rotate-90 transform text-gray-500"
               xmlns="http://www.w3.org/2000/svg"
